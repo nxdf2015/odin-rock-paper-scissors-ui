@@ -4,6 +4,7 @@
   game rule : paper -> rock -> scissors
 
 */
+const MAX_ROUND = 5
 
 const rock = "ROCK"
 const paper = "PAPER"
@@ -28,6 +29,7 @@ function computerPlay(){
 function playRound(playerSelection,computerSelection){
   let draw = false   
   let win = false    // true if the player win
+ 
   if (playerSelection == computerSelection){
       draw = true;
   }
@@ -45,37 +47,11 @@ function playRound(playerSelection,computerSelection){
       
       result = `you ${win ? "win" : "loose"} ! ${win ? playerSelection : computerSelection} beats ${win ? computerSelection : playerSelection } `
   }
-  console.log(result)
+  //console.log(result)
   return { result , draw, win}
 }
 
 
-/**
- * @param none
- * play 5 five round and report the winner
- */
-function game(){
-let playerWin = 0
-let countDraw = 0
-    for (i = 0 ; i < 5 ; i++){
-    const playerSelection = selectionPlayer()
-    const computerSelection = computerPlay()
-    const {result,draw,win} = playRound(playerSelection , computerSelection)
-    if (win) playerWin++
-    if (draw) countDraw++
-    }
-result = ""
-computerWin = 5 - playerWin - countDraw 
-if (computerWin == playerWin ){
-    result = "DRAW"
-}
-else {
-    result = `${ playerWin > computerWin ? "player" : "computer" } win !`
-}
-
-console.log(result)
-return { result , win : playerWin > computerWin , draw : playerWin == computerWin}
-}
 
 
 /**
@@ -98,4 +74,133 @@ function selectionPlayer(){
 
 
 
-game()
+const buttonPlayers = [...document.querySelectorAll(".player__button")]
+const computerSelectionElt = document.querySelector(".computer__selection")
+const result = document.querySelector(".result")
+const initButton = document.querySelector(".start__button")
+
+const resultPlayerElt = document.querySelector(".result__player")
+const resultComputerElt = document.querySelector(".result__computer")
+const resultDrawElt = document.querySelector(".result__draw")
+const resultGameElt = document.querySelector(".result__game")
+
+
+function Game(){
+        let countRound = 5
+       
+
+        let scores ={player : 0 , computer : 0 , draw : 0}
+
+        
+        
+        this.init = function() {
+            initButton.addEventListener("click", this.startGame) 
+           
+            buttonPlayers.map(btn => btn.addEventListener("click",  event => 
+              this.rounds( event.target.dataset.id.toUpperCase())))
+        }
+
+        this.startGame = function() {
+            renderHtml(initButton,"game started") 
+            renderHtml(computerSelectionElt,"")
+            renderScore(scores)
+            initWinnerElt()
+            setButtonDisabled()
+            waitSelection(10)
+            initButton.disabled = true
+        }
+
+
+        this.rounds = function(playerSelection){
+
+                 computerSelection = computerPlay() 
+                renderHtml(computerSelectionElt,computerSelection)
+               
+                const {result,win,draw} = playRound(playerSelection,computerSelection)
+                countRound--
+                 
+
+                  (win) ? scores.player++: draw ? scores.draw++ : scores.computer++
+                 
+                if (countRound > 0){
+                      setButtonDisabled()
+                      waitSelection(10)
+                      renderScore(scores)
+                }
+                else {
+                    this.endGame()
+                }
+
+              
+        }
+
+    
+
+       this.endGame=function(){
+           setButtonDisabled()
+           initButton.disabled = false
+           if (scores.player ==  scores.computer)
+            renderWinner("draw")
+          else  
+           renderWinner(scores.player > scores.computer ? "player" : "computer")
+           
+           renderHtml(initButton,"start a new game")
+           countRound = 5
+           scores ={player : 0 , computer : 0 , draw : 0}
+        
+       }
+ 
+}
+
+ 
+game = new Game()
+
+game.init()
+
+
+ 
+function App() {
+    
+}
+
+
+function waitSelection(count){
+    if (count < 0){
+        renderHtml(initButton,"play")
+        setButtonEnable()
+        return ;
+    }
+    setTimeout(() => {
+        renderHtml(initButton,count)
+        waitSelection(--count)
+    } , 100)
+}
+
+function setButtonDisabled(){
+    buttonPlayers.map( btn => btn.disabled = true)
+}
+
+function setButtonEnable(){
+    buttonPlayers.map( btn => btn.disabled = false)
+}
+
+function renderHtml(element,value){
+    element.innerHTML = value
+}
+
+
+function renderScore({player,computer,draw}){
+    renderHtml(resultPlayerElt, player)
+    renderHtml(resultComputerElt,computer)
+    renderHtml(resultDrawElt,draw)
+}
+
+function initWinnerElt(){
+    resultGameElt.innerHTML=""
+}
+
+
+
+function renderWinner(value){
+     renderHtml(resultGameElt,`winner :${value}`)
+}

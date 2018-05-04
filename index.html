@@ -2,11 +2,46 @@
 <html>
 
 <head>
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <div class="container">
+        <div class="header light-primary-color">
+            <span class=title>rock paper scissors</span>
+        </div>
+        <div class="player">
+            <div class="player__title">player</div>
+            <div class="player__selection">
+                <button class="player__button" data-id="rock">rock</button>
+                <button class="player__button" data-id="paper">paper</button>
+                <button class="player__button" data-id="scissors">scissors</button>
+            </div>
 
+        </div>
+        <div class="result__game"></div>
+       
+        <div class="computer">
+            <div class="computer__title">computer</div>
+            <div class="computer__selection"> </div>
+        </div>
+        <div class="result">
+            <div class="result__player">
+
+            </div>
+            <div class="draw">
+                <div class="title">draw</div>
+                <div class="result__draw">
+
+                </div>
+            </div>
+
+            <div class="result__computer"></div>
+        </div>
+        <div class="start">
+            <button class="start__button">init game</button>
+        </div>
+    </div>
     <script src="app.js"> </script>
 </body>
 
